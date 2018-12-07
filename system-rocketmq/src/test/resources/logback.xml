@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+	<property name="log.project" value="happygo"></property>
+	<contextName>${log.project}</contextName>
+	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+	<jmxConfigurator />
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date [%-5level] [%thread] %logger{80} [%file:%line] >> %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<property name="log.base" value="${catalina.base}/logs/web/${log.project}" />
+	<appender name="logfile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.base}.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date [%-5level] [%thread] %logger{80} [%file:%line] >> %msg%n</pattern>
+		</encoder>
+	</appender>
+
+
+	<logger name="cn.v1.system" level="INFO" />
+
+	<logger name="cn.v1.system.security.shiro" level="DEBUG" />
+
+	<logger name="daoSql" level="WARN" />
+
+	<logger name="org.apache" level="WARN" />
+
+	<logger name="org.mybatis" level="WARN" />
+
+	<logger name="org.springframework" level="WARN" />
+
+	<logger name="net.sf.ehcache" level="WARN" />
+
+	<root level="DEBUG">
+		<appender-ref ref="stdout" />
+		<appender-ref ref="logfile" />
+	</root>
+
+</configuration>
+

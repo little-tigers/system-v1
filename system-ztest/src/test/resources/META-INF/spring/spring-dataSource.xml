@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		     http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+    <!-- 数据库连接池 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+
+        <property name="filters" value="${jdbc.filters}" />
+
+        <property name="maxActive" value="${jdbc.maxActive}" />  <!--可以从对象池中取出的对象最大个数，为0则表示没有限制，默认为8-->
+        <property name="initialSize" value="${jdbc.initialSize}" /> <!--设置连接池建立时连接的数目-->
+        <property name="maxWait" value="${jdbc.maxWait}" /> <!--最大等待秒数, 单位为 ms, 超过时间会丟出错误信息，-1为无限制-->
+        <property name="minIdle" value="${jdbc.minIdle}" /> <!--对象池中对象最小个数-->
+
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+
+        <property name="validationQuery" value="${jdbc.validationQuery}" />
+        <property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+        <property name="testOnReturn" value="${jdbc.testOnReturn}" />
+
+        <property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}" />
+        <property name="maxOpenPreparedStatements" value="${jdbc.maxOpenPreparedStatements}" />
+
+        <property name="removeAbandoned"  value="${jdbc.removeAbandoned}" />
+        <property name="removeAbandonedTimeout"  value="${jdbc.removeAbandonedTimeout}" />
+
+    </bean>
+
+</beans>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+        >
+<mapper namespace="cn.v1.system.dao.SysUserMapper" >
+    <resultMap id="RM_Sys_User" type="cn.v1.system.pojo.SysUser" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="user_type" property="userType" jdbcType="CHAR" />
+        <result column="head_img" property="headImg" jdbcType="VARCHAR" />
+        <result column="login_ip" property="loginIp" jdbcType="VARCHAR" />
+        <result column="login_time" property="loginTime" jdbcType="TIMESTAMP" />
+        <result column="login_flag" property="loginFlag" jdbcType="CHAR" />
+        <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+        <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+        <collection column="id" property="roleList" select="getRoleList" />
+    </resultMap>
+
+    <sql id="Sys_User_Column_List" >
+        t.id,
+        t.login_name,
+        t.password,
+        t.no,
+        t.name,
+        t.phone,
+        t.tel,
+        t.email,
+        t.user_type,
+        t.head_img,
+        t.company_id,
+        t.office_id,
+        t.login_ip,
+        t.login_time,
+        t.login_flag,
+        t.create_by,
+        t.create_date,
+        t.update_by,
+        t.update_date,
+        t.remarks,
+        t.del_flag
+    </sql>
+
+    <select id="findById" resultMap="RM_Sys_User">
+        select
+        <include refid="Sys_User_Column_List"/>
+        from
+        T_Sys_User t
+        where
+        t.ID = #{id}
+        and
+        t.del_flag = '0'
+    </select>
+
+    <insert id="insert" >
+        <!--  自动生成uuid主键 -->
+        <selectKey keyProperty="id" resultType="java.lang.String"
+                   order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        insert
+        into
+        T_Sys_User
+        (
+        id,
+        login_name,
+        password,
+        no,
+        name,
+        phone,
+        tel,
+        email,
+        user_type,
+        head_img,
+        company_id,
+        office_id,
+        login_ip,
+        login_time,
+        login_flag,
+        create_by,
+        create_date,
+        update_by,
+        update_date,
+        remarks,
+        del_flag
+        )
+        values
+        (
+        #{id, jdbcType=VARCHAR},
+        #{loginName, jdbcType=VARCHAR},
+        #{password, jdbcType=VARCHAR},
+        #{no, jdbcType=VARCHAR},
+        #{name, jdbcType=VARCHAR},
+        #{phone, jdbcType=VARCHAR},
+        #{tel, jdbcType=VARCHAR},
+        #{email, jdbcType=VARCHAR},
+        #{userType, jdbcType=CHAR},
+        #{headImg, jdbcType=VARCHAR},
+        #{company.id, jdbcType=CHAR},
+        #{office.id, jdbcType=VARCHAR},
+        #{loginIp, jdbcType=VARCHAR},
+        #{loginTime, jdbcType=TIMESTAMP},
+        #{loginFlag, jdbcType=CHAR},
+        #{createBy, jdbcType=VARCHAR},
+        #{createDate, jdbcType=TIMESTAMP},
+        #{updateBy, jdbcType=VARCHAR},
+        #{updateDate, jdbcType=TIMESTAMP},
+        #{remarks, jdbcType=VARCHAR},
+        #{delFlag, jdbcType=CHAR}
+        )
+    </insert>
+
+
+    <update id="update" >
+        update
+            T_Sys_User
+            set
+            name = #{name, jdbcType=VARCHAR},
+            phone = #{phone, jdbcType=VARCHAR},
+            tel = #{tel, jdbcType=VARCHAR},
+            email = #{email, jdbcType=VARCHAR},
+            user_type = #{userType, jdbcType=CHAR},
+            head_img = #{headImg, jdbcType=VARCHAR},
+            company_id = #{company.id, jdbcType=CHAR},
+            office_id = #{office.id, jdbcType=VARCHAR},
+            login_ip = #{loginIp, jdbcType=VARCHAR},
+            login_time = #{loginTime, jdbcType=TIMESTAMP},
+            update_by = #{loginFlag, jdbcType=CHAR},
+            update_by = #{updateBy, jdbcType=VARCHAR},
+            update_date= #{updateDate, jdbcType=TIMESTAMP},
+            remarks = #{remarks, jdbcType=VARCHAR}
+            where
+              id = #{id}
+    </update>
+
+    <update id="delete">
+        update
+        T_Sys_User
+        set
+        del_flag = '1'
+        where
+        id = #{id}
+    </update>
+
+    <select id="findPage" resultMap="RM_Sys_User" >
+        select
+        <include refid="Sys_User_Column_List"/>
+        from
+        T_Sys_User t
+        <where>
+            <if test="@Ognl@isNotEmpty(name)">
+                and t.name like '%${name}%'
+            </if>
+            <if test="@Ognl@isNotEmpty(phone)">
+                and t.phone like '%${phone}%'
+            </if>
+            <if test="@Ognl@isNotEmpty(userType)">
+                and t.user_type = #{userType}
+            </if>
+            and
+            t.del_flag = '0'
+        </where>
+    </select>
+
+    <select id="findList" resultMap="RM_Sys_User" >
+        select
+        <include refid="Sys_User_Column_List"/>
+        from
+        T_Sys_User t
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(name)">
+                and t.name = = #{name}
+            </if>
+            <if test="@Ognl@isNotEmpty(phone)">
+                and t.phone = #{phone}
+            </if>
+            <if test="@Ognl@isNotEmpty(userType)">
+                and t.user_type = #{userType}
+            </if>
+        </where>
+        and
+        t.del_flag = '0'
+    </select>
+
+    <select id="getRoleList" parameterType="String" resultType="cn.v1.system.pojo.SysRole">
+       select
+       t1.id,
+       t1.name
+       from
+       T_Sys_User_Role t
+       right join
+       T_Sys_Role t1
+       on
+       t.role_id = t1.id
+       where
+       t.user_id = #{id}
+        and
+       t1.del_flag = '0'
+     </select>
+
+    <select id="findByLoginName" resultMap="RM_Sys_User">
+        select
+        <include refid="Sys_User_Column_List"/>
+        from
+        T_Sys_User t
+        where
+        t.login_name = #{loginName}
+        and
+        t.del_flag = '0'
+    </select>
+
+</mapper>

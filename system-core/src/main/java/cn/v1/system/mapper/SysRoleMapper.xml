@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+        >
+<mapper namespace="cn.v1.system.dao.SysRoleMapper" >
+    <resultMap id="RM_Sys_Role" type="cn.v1.system.pojo.SysRole" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="en_name" property="enName" jdbcType="VARCHAR" />
+        <result column="role_type" property="roleType" jdbcType="VARCHAR" />
+        <result column="data_scope" property="dataScope" jdbcType="CHAR" />
+        <result column="is_sys" property="isSys" jdbcType="CHAR" />
+        <result column="usable" property="usable" jdbcType="CHAR" />
+        <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+        <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+        <association column="office_id" property="office"  select="getOfficeById" />
+        <collection column="id" property="userList" select="getUserList" />
+        <collection column="id" property="menuList" select="getMenuList" />
+    </resultMap>
+
+    <sql id="Sys_Role_Column_List" >
+        t.id,
+        t.name,
+        t.en_name,
+        t.role_type,
+        t.data_scope,
+        t.is_sys,
+        t.usable,
+        t.office_id,
+        t.create_by,
+        t.create_date,
+        t.update_by,
+        t.update_date,
+        t.remarks,
+        t.del_flag
+    </sql>
+
+    <select id="findById" resultMap="RM_Sys_Role">
+        select
+        <include refid="Sys_Role_Column_List"/>
+        from
+        T_Sys_Role t
+        where
+        t.ID = #{id}
+        and
+        t.del_flag = '0'
+    </select>
+
+    <insert id="insert" >
+        <!--  自动生成uuid主键 -->
+        <selectKey keyProperty="id" resultType="java.lang.String"
+                   order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        insert
+        into
+        T_Sys_Role
+        (
+        id,
+        name,
+        en_name,
+        role_type,
+        data_scope,
+        is_sys,
+        usable,
+        office_id,
+        create_by,
+        create_date,
+        update_by,
+        update_date,
+        remarks,
+        del_flag
+        )
+        values
+        (
+        #{id, jdbcType=VARCHAR},
+        #{name, jdbcType=VARCHAR},
+        #{enName, jdbcType=VARCHAR},
+        #{roleType, jdbcType=VARCHAR},
+        #{dataScope, jdbcType=CHAR},
+        #{isSys, jdbcType=CHAR},
+        #{usable, jdbcType=CHAR},
+        #{office.id, jdbcType=VARCHAR},
+        #{parentIds, jdbcType=VARCHAR},
+        #{createBy, jdbcType=VARCHAR},
+        #{createDate, jdbcType=TIMESTAMP},
+        #{updateBy, jdbcType=VARCHAR},
+        #{updateDate, jdbcType=TIMESTAMP},
+        #{remarks, jdbcType=VARCHAR},
+        #{delFlag, jdbcType=CHAR}
+        )
+    </insert>
+
+
+    <update id="update" >
+        update
+            T_Sys_Role
+            set
+            parent_id = #{parent.id, jdbcType=VARCHAR},
+            parent_ids = #{parentIds, jdbcType=VARCHAR},
+            name = #{name, jdbcType=VARCHAR},
+            href = #{href, jdbcType=VARCHAR},
+            target = #{target, jdbcType=VARCHAR},
+            icon = #{icon, jdbcType=VARCHAR},
+            permission = #{permission, jdbcType=VARCHAR},
+            sort = #{sort, jdbcType=INTEGER},
+            update_by = #{updateBy, jdbcType=VARCHAR},
+            update_date= #{updateDate, jdbcType=TIMESTAMP},
+            remarks = #{remarks, jdbcType=VARCHAR}
+            where
+              id = #{id}
+    </update>
+
+    <update id="delete">
+        update
+        T_Sys_Role
+        set
+        del_flag = '1'
+        where
+        id = #{id}
+    </update>
+
+    <select id="findPage" resultMap="RM_Sys_Role" >
+        select
+        <include refid="Sys_Role_Column_List"/>
+        from
+        T_Sys_Role t
+        <where>
+            <if test="@Ognl@isNotEmpty(name)">
+                and t.name like '%${name}%'
+            </if>
+            <if test="@Ognl@isNotEmpty(isSys)">
+                and t.is_sys = #{isSys}
+            </if>
+            and
+            t.del_flag = '0'
+        </where>
+    </select>
+
+    <select id="findList" resultMap="RM_Sys_Role" >
+        select
+        <include refid="Sys_Role_Column_List"/>
+        from
+        T_Sys_Role t
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(name)">
+                and t.name = = #{name}
+            </if>
+            <if test="@Ognl@isNotEmpty(isSys)">
+                and t.is_sys = #{isSys}
+            </if>
+        </where>
+        and
+        t.del_flag = '0'
+    </select>
+
+    <select id="getOfficeById"  parameterType="String" resultType="cn.v1.system.pojo.SysOffice">
+        select
+        id,
+        name
+        from
+        T_Sys_Office
+        where
+        id = #{office.id}
+        and
+        del_flag = '0'
+    </select>
+
+    <select id="getUserList" parameterType="String" resultType="cn.v1.system.pojo.SysUser">
+       select
+       t1.id,
+       t1.login_name as loginName,
+       t1.name
+       from
+       T_Sys_User_Role t
+       right join
+       T_Sys_User t1
+       on
+       t.user_id = t1.id
+       where
+       t.role_id = #{id}
+        and
+       t1.del_flag = '0'
+     </select>
+
+    <select id="getMenuList" parameterType="String" resultType="cn.v1.system.pojo.SysMenu">
+       select
+       t1.id,
+       t1.name
+       from
+       T_Sys_Role_Menu t
+       right join
+       T_Sys_Menu t1
+       on
+       t.menu_id = t1.id
+       where
+       t.role_id = #{id}
+        and
+       t1.del_flag = '0'
+     </select>
+
+
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="true">
+
+	<bean id="rocketMqProducer" class="cn.v1.rocketmq.core.RocketMQProducer" init-method="init"
+		  destroy-method="destroy" scope="singleton">
+		<property name="producerGroup" value="sys-producer" />
+		<property name="namesrvAddr" value="${mq.host}" />
+		<property name="retryTimes" value="3" />
+	</bean>
+
+	<bean id="rocketMqConsumer" class="cn.v1.rocketmq.core.RocketMQConsumer" init-method="init"
+		  destroy-method="destroy" scope="singleton">
+		<property name="producerGroup" value="sys-producer" />
+		<property name="namesrvAddr" value="${mq.host}" />
+	</bean>
+
+</beans>
